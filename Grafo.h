@@ -32,7 +32,6 @@ public:
 	string imprimir() // -- falta fazer
 	Aresta busca_caminho(Vertice A, Vertice B); // -- falta fazer
 	void Ordenar_vertice(){/*MergeSort*/}; // falta fazer
-	Aresta return_k_best_road(); // falta fazer -  ultima função
 	bool add_aresta(); // falta fazer
     bool remover_aresta(); // falta fazer
 
@@ -61,6 +60,8 @@ Grafo::Grafo(Grafo G) {
 
 
 void Grafo::carregar_grafo(const string &arquivo) {
+
+
 	ifstream fin; // Objeto de fluxo de entrada de arquivo
 	fin.open(arquivo, ios::in); // Abrindo fluxo de leitura com o arquivo
 	// Verificando se o arquivo foi aberto corretamente
@@ -68,6 +69,7 @@ void Grafo::carregar_grafo(const string &arquivo) {
 		cerr << "Arquivo nao encontrado..." << endl;
 		exit(0);
 	}
+
 	fin >> v; // Lendo quantidade de vértices que deve estar presenta na primeira linha do arquivo
 	// Lendo vértices e peso de cada aresta e incrementando qtd de arestas do grafo
 	e++; // Começar a armazenar as arestas a partir do indice 1 do vetor aresta[]
@@ -76,8 +78,12 @@ void Grafo::carregar_grafo(const string &arquivo) {
 		aresta[e].status = OPC; // Setando todas arestas inicialmente como opcionais
 		custo_total += aresta[e].peso; // Calculando custo total de todas as arestas do grafo
 	}
+
+
 	e -= 2; // Correção na leitura
 	// Fechando fluxo de leitura de arquivo
+
+
 	fin.close();
 }
 
