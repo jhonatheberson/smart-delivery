@@ -166,7 +166,7 @@ bool inseridoNaHeap(struct HeapMin* heapMin, int v)
 void imprime(int dist[], int n) {
 	cout << "Vertex Distance from Source\n";
 	for (int i = 0; i < n; ++i) {
-		cout << i + "     " << dist[i];
+		cout << i << "     " << dist[i] << endl;
 	}
 }
 
