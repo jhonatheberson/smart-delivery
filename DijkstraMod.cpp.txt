@@ -1,0 +1,82 @@
+int Grafo::Dijkstra(Vertice Or, Vertice Ds, Aresta V[]){
+
+    int pesoC;
+    int i = Or.id;
+    int j = Ds.id;
+
+    if(i < 0 || j < 0 || i > v || j > v)
+    {
+        cout << "Dijsktra: ENTRADAS INVALIDAS." << endl;
+        return 0;
+    }
+
+    int c;
+
+    int Qta=0;
+
+    int d[v];
+    int rot[v];
+    int rote[v];
+    bool vm[v];
+
+    Fila fv;
+    Pilha pa;
+
+    Or.marcar();
+
+    fv.enfileirar(i);
+    vm[fv.top()] = true;
+
+    d[vertice[i].id] = 0;
+
+    for(int k = 0; k < v; k++)
+    {
+        rot[vertice[k].id] = -1;
+        rote[vertice[k].id] = -1;
+        if(vertice[k].id != i) d[vertice[k].id] = INT_MAX;
+    }
+
+
+    for(int k = 0;!fv.vazio(); k++)
+    {
+        for(int l = 0; l < e; l++)
+        {
+            c = -1;
+            if (aresta[l].i == fv.top()) c = aresta[l].j;
+            else if (aresta[l].j == fv.top()) c = aresta[l].i;
+
+            if (c > 0)
+            {
+                pesoC = d[fv.top()] + aresta[l].peso;
+
+                if( d[c] > pesoC )
+                {
+                    d[c] = pesoC;
+                    rot[c] = fv.top();
+                    rote[c] = l;
+                    if(vm[c] == false) fv.enfileirar(c);
+                    vm[c] = true;
+                }
+            }
+        }
+        vm[fv.top()] = false;
+        fv.desenfileirar();
+    }
+
+    do
+    {
+        pa.empilhar(rote[j]);
+        for(int k = 0; k < v; k++) if(vertice[k].id == j) vertice[k].marcar();
+        j = rot[j];
+        Qta++;
+
+    }while(j != i);
+
+    for(int w = 0; w < Qta; w++)
+    {
+        V[w] = aresta[pa.top()];
+        pa.desempilhar();
+    }
+
+    return Qta;
+}
