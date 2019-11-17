@@ -6,15 +6,66 @@
 #include <cstdlib> // Funções padrão
 #include <string> // Manipulação de strings
 #include <limits>
+#include <stack>
+#include <ctime> // Para gerar grafos aleatórios
 #include "Vertice.h" // Inclusão do tipo Aresta
 
 using namespace std;
 
-#define MAX_V 31 // Quantidade maxima de vértices
+#define MAX_V 100 // Quantidade maxima de vértices
+
+ // Escreve um grafo grid aleatório com n*n vertices no arquivo "Grid.txt"
+void gerarGrafoGrid(int n){
+    srand(time(NULL));
+    int vg = n*n;
+    ofstream Arquivo;
+    Arquivo.open("Grid.txt");
+    if (Arquivo.is_open())
+    {
+        Arquivo << vg <<"\nVertices:\n";
+        for(int k = 0; k < vg; k++)
+            Arquivo << k+1 <<" "<< (rand()%3)+1 <<"\n";
+        Arquivo <<"Arestas:\n";
+        for(int k = 0; k < vg; k++)
+                {
+                    if(k%n < n-1) Arquivo << k+1 <<" "<< k+2 << " " << (rand()%99)+1 << "\n";
+                    if(k+n < vg) Arquivo << k+1 <<" "<< k+n+1 << " " << (rand()%99)+1 << "\n";
+                }
+    }
+    else
+    {
+        cout << "Arquivo Grid.txt nao encontrado..." << endl;
+    }
+    Arquivo.close();
+
+}
+
+// Escreve um grafo completo aleatório com n vertices no arquivo "Completo.txt".
+void gerarGrafoCompleto(int n)
+{
+    srand(time(NULL));
+    ofstream Arquivo;
+    Arquivo.open("Completo.txt");
+    if (Arquivo.is_open())
+    {
+        Arquivo << n <<"\nVertices:\n";
+        for(int k = 0; k < n; k++)
+            Arquivo << k+1 <<" "<< (rand()%3)+1 <<"\n";
+        Arquivo <<"Arestas:\n";
+        for(int k = 0; k < n; k++)
+            for(int l=0; l < k; l++)
+                    Arquivo << k+1 <<" "<< l+1 << " " << (rand()%99)+1 << "\n";
+    }
+    else
+    {
+        cout << "Arquivo Completo.txt nao encontrado..." << endl;
+    }
+    Arquivo.close();
+
+}
 
 //Pilha Simples
-struct Pilha
-{
+struct Pilha{
 private:
     Pilha *anterior;
     unsigned long long tamanho;
@@ -45,7 +96,7 @@ public:
         return tamanho;
     }
 
-    void empilhar(int V)
+    void push(int V)
     {
         if(tamanho > 0)
         {
@@ -59,7 +110,7 @@ public:
         tamanho++;
     }
 
-    void desempilhar()
+    void pop()
     {
         if(tamanho > 1)
             topo = anterior->topo;
@@ -71,10 +122,15 @@ public:
         {
             Pilha* lixo = anterior;
             anterior = anterior->anterior;
-            if(lixo != NULL) delete lixo;
+            if(lixo != NULL)
+            {
+                delete lixo;
+            }
         }
         if(tamanho > 0) tamanho--;
     }
+
+    void esvaziar() {while(!vazio()) pop();}
 };
 
 class Grafo
@@ -86,15 +142,12 @@ public:
     int matrizPesos[MAX_V][MAX_V]; // Matriz de Pesos das Arestas
     int melhorRota[MAX_V]; // Armazena os vertices com a melhor rota;
 
-    inline Grafo()
-    {
-        v = 0;
-    }
+    inline Grafo() {v = 0;} //Construtor Default.
     void invalidarMatriz(); // Inicia todos os valores da matriz de Pesos com -1. O(v²)
-    void desmarcarVertices(); // Retorna a quantidade de Vertices Marcados. O(v)
+    void desmarcarVertices(); // Desmarca Todos os Vertices. O(v)
     void criarAresta(int i, int j, int p); // Cria uma aresta (atualizando a matriz de pesos) entre os vertices de id i/j com peso p. O(1)
     void carregar_grafo(char *arquivo); // Lê o Grafo de um arquivo. O(v²)
-    void imprimir(); // Imprimeo grafo em um arquivo de nome "Resultado.txt". O(v²)
+    void imprimir(); // Imprime o grafo em um arquivo de nome "Resultado.txt". O(v²)
     void Ordenar_vertice(int, int); //Ordena o vetor de vertices do grafo, em ordem decrescente, de acordo com os graus, utilizando o MergeSort O(vlogv)
     Vertice Get_restaurante(); // retona o ID do vertice que é o restaurante O(v);
     void Set_restaurante(int); // Indica qual vertice será o restaurante (desativa o antigo caso haja) O(v);
@@ -102,6 +155,7 @@ public:
     int Dijkstra(int i, int pesoDesejado, int aux[]); // Encontra o menor caminho entre um vertice e outro vertice de 'pesoDesejado', e retorda o id do vertice encontrado.
 
 };
+
 
 void Grafo::criarAresta(int i, int j, int p){
 
@@ -276,7 +330,7 @@ void Grafo::Ordenar_vertice(int l, int r){
 
 void Grafo::imprimir(){
     ofstream Arquivo;
-    Arquivo.open("Teste.txt");
+    Arquivo.open("Resultado.txt");
 
     if (Arquivo.is_open())
     {
@@ -298,6 +352,7 @@ void Grafo::imprimir(){
 
 int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
     //Verifica se as entradas i e j são validas
+
     if(i <= 0 || grauDesejado <= 0 || i > v || grauDesejado > 3)
     {
         cout << "Dijsktra: ENTRADAS INVALIDAS!" << endl;
@@ -320,7 +375,8 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
     //Variavel usada como marcador dos vertices para o algoritmo do dijkstra.
     bool vm[v];
 
-    //Fila para armazenar os vertices a seres visitados e pilha para armazena a rota.
+    //Pilha para armazenar os vertices a seres visitados e pilha para armazena a rota.
+    //Pilha pa;
     Pilha pa;
 
     //Coloca o vertice inicial na fila.
@@ -342,7 +398,6 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
     {
         pivoPeso = INT_MAX;
         proxVertice = -1;
-        //Percorre o vetor de vertices para procurar arestas na matriz de peso e atualizar as rotas e as distâncias.
         for(int l = 0; l < v; l++)
         {
             c = -1;
@@ -367,7 +422,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
                 }
             }
         }
-        if(proxVertice <= 0 && k < v-1)
+        if(proxVertice < 0 && k < v-1)
         {
             pPeso2 = INT_MAX;
             for(int m = 0; m < v; m++)
@@ -401,7 +456,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
 
     melhorVertice = j+1;
 
-    pa.empilhar(j+1);
+    pa.push(j+1);
 
     do
     {
@@ -409,7 +464,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
         for(int k = 0; k < v; k++)
             if(vertice[k].id == j+1)
                 vertice[k].marcar();
-        pa.empilhar(j+1);
+        pa.push(j+1);
     }
     while(j != i);
 
@@ -417,9 +472,12 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
         if(!pa.vazio())
         {
             aux[k] = pa.top();
-            pa.desempilhar();
+            pa.pop();
         }
         else aux[k] = -1;
+
+    while(!pa.vazio())
+        pa.pop();
 
     return melhorVertice;
 }
