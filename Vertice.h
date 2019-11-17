@@ -3,15 +3,15 @@
 
 struct Vertice {
 
-
 	int id; // Identificação do vertice
     int grau; // Grau de prioridade do vertice
-    int status; // Status do vertice (Já visitada ou não)
+    bool status; // Status do vertice (Já visitada ou não)
+    bool tipo;  // Indica qual vertice é o restaurante
 
 	// Sobrecarga do operador '=='
 	void marcar(){ status = true;}
 	bool operator==(const Vertice &V) {
-		if (id == V.id && status == V.status && grau == A.grau){
+		if (id == V.id && status == V.status && grau == V.grau && tipo == V.tipo){
                 return true;
 		}
 		return false;
