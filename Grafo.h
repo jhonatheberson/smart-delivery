@@ -116,22 +116,21 @@ public:
             topo = anterior->topo;
 
         if(tamanho == 2)
-            delete anterior;
+            if(anterior != NULL) delete anterior;
 
         if(tamanho > 2)
         {
             Pilha* lixo = anterior;
             anterior = anterior->anterior;
-            if(lixo != NULL)
-            {
-                delete lixo;
-            }
+            if(lixo != NULL) delete lixo;
         }
         if(tamanho > 0) tamanho--;
     }
 
     void esvaziar() {while(!vazio()) pop();}
 };
+
+Pilha pa;
 
 class Grafo
 {
@@ -212,7 +211,7 @@ void Grafo::melhoresRotas(){
     //desmarca os vertices e recebe o id do vertice restaurante.
     desmarcarVertices();
     origem = Get_restaurante().id;
-
+    Ordenar_vertice(0, v-1);
     ofstream Arquivo;
     Arquivo.open("melhoresRotas.txt");
     if (Arquivo.is_open())
@@ -366,7 +365,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
     int pesoC, p, proxVertice, verticeAtual, pivoPeso, pPeso2;
     int c, j, melhorVertice;
     int pCaminhoMelhor;
-    int VerticesNMarcados[v];
+    int VerticesNMarcados[v] = {};
 
     //Variaves de armazenar as rotas e a soma dos pesos.
     int d[v];
@@ -377,7 +376,6 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
 
     //Pilha para armazenar os vertices a seres visitados e pilha para armazena a rota.
     //Pilha pa;
-    Pilha pa;
 
     //Coloca o vertice inicial na fila.
     verticeAtual = i;
