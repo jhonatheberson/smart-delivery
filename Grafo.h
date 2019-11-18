@@ -5,17 +5,21 @@
 #include <fstream> // Manipulação de arquivos
 #include <cstdlib> // Funções padrão
 #include <string> // Manipulação de strings
-#include <limits>
-#include <stack>
+#include <limits> // Para Ajudar na leiura e escrita de arquivos
 #include <ctime> // Para gerar grafos aleatórios
 #include "Vertice.h" // Inclusão do tipo Aresta
 
 using namespace std;
 
-#define MAX_V 100 // Quantidade maxima de vértices
+#define MAX_V 718 // Quantidade maxima de vértices
+
+int contt(0);
 
  // Escreve um grafo grid aleatório com n*n vertices no arquivo "Grid.txt"
 void gerarGrafoGrid(int n){
+
+    cout << "Imprimindo grafo grid aleatorio com " << n*n << " vertices no arquivo Grid.txt..." << endl << endl;
+
     srand(time(NULL));
     int vg = n*n;
     ofstream Arquivo;
@@ -31,18 +35,21 @@ void gerarGrafoGrid(int n){
                     if(k%n < n-1) Arquivo << k+1 <<" "<< k+2 << " " << (rand()%99)+1 << "\n";
                     if(k+n < vg) Arquivo << k+1 <<" "<< k+n+1 << " " << (rand()%99)+1 << "\n";
                 }
+
+        cout << "Grafo grid com " << vg << " vertices impresso com sucesso no arquivo Grid.txt..." << endl << endl << endl;
     }
     else
     {
-        cout << "Arquivo Grid.txt nao encontrado..." << endl;
+        cout << "Arquivo Grid.txt nao encontrado..." << endl << endl << endl;
     }
     Arquivo.close();
 
 }
 
 // Escreve um grafo completo aleatório com n vertices no arquivo "Completo.txt".
-void gerarGrafoCompleto(int n)
-{
+void gerarGrafoCompleto(int n){
+    cout << "Imprimindo grafo completo aleatorio com " << n << " vertices no arquivo Completo.txt..." << endl << endl;
+
     srand(time(NULL));
     ofstream Arquivo;
     Arquivo.open("Completo.txt");
@@ -55,10 +62,12 @@ void gerarGrafoCompleto(int n)
         for(int k = 0; k < n; k++)
             for(int l=0; l < k; l++)
                     Arquivo << k+1 <<" "<< l+1 << " " << (rand()%99)+1 << "\n";
+
+        cout << "Grafo completo com " << n << " vertices impresso com sucesso no arquivo Completo.txt..." << endl << endl << endl;
     }
     else
     {
-        cout << "Arquivo Completo.txt nao encontrado..." << endl;
+        cout << "Arquivo Completo.txt nao encontrado..." << endl << endl << endl;
     }
     Arquivo.close();
 
@@ -130,6 +139,7 @@ public:
     void esvaziar() {while(!vazio()) pop();}
 };
 
+//Pilha para armazenar os vertices a seres visitados e pilha para armazena a rota.
 Pilha pa;
 
 class Grafo
@@ -206,12 +216,15 @@ Vertice Grafo::Get_restaurante(){
 
 void Grafo::melhoresRotas(){
 
+    cout << endl << "Tentando gerar as melhores rotas e escreve-las no arquivo melhoresRotas.txt... " << endl << endl;
+
     int origem(0), pOrigem, cont(0);
 
     //desmarca os vertices e recebe o id do vertice restaurante.
     desmarcarVertices();
     origem = Get_restaurante().id;
     Ordenar_vertice(0, v-1);
+    //imprimir();
     ofstream Arquivo;
     Arquivo.open("melhoresRotas.txt");
     if (Arquivo.is_open())
@@ -229,15 +242,20 @@ void Grafo::melhoresRotas(){
                     Arquivo << " (" << matrizPesos[melhorRota[j]-1][melhorRota[j+1]-1] << ") " << melhorRota[j+1];
                 Arquivo << "\n\n";
             }
+
+        cout << "As melhores rotas foram geradase escritas no arquivo melhoresRotas.txt com sucesso... " << endl << endl << endl;
     }
     else
     {
-        cout << "Nao foi possivel abrir o arquivo para escrever as rotas..." << endl;
+        cout << "Nao foi possivel abrir o arquivo para escrever as rotas..." << endl << endl << endl;
     }
     Arquivo.close();
 }
 
 void Grafo::carregar_grafo(char *arquivo){
+
+    cout << "Tentando carregar Grafo do arquivo " << arquivo << "... " << endl << endl;
+
     int i=0, j=0, p=0;
 
     ifstream fin; // Objeto de fluxo de entrada de arquivo
@@ -246,6 +264,13 @@ void Grafo::carregar_grafo(char *arquivo){
     if (fin.is_open())
     {
         fin >> v; // Lendo quantidade de vértices que deve estar presenta na primeira linha do arquivo
+
+        if(v > MAX_V)
+        {
+            cout << "ERRO!!! v = " << v << " e MAX_V = " << MAX_V << ";  Aumente MAX_V no programa ou diminua v no arquivo." << endl << endl;
+            exit(0);
+        }
+
         invalidarMatriz(); // inicia todos os valores da matriz de peso com -1, como se não huvesse nenhuma aresta.
         fin.ignore(numeric_limits<streamsize>::max(), ':');
         fin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -265,11 +290,14 @@ void Grafo::carregar_grafo(char *arquivo){
             criarAresta(i, j, p);
         }
         fin.close();// Fechando fluxo de leitura de arquivo
+        cout << "Grafo do arquivo " << arquivo << " carregado com sucesso! " << endl << endl << endl;
     }
     else
     {
         cout << "Arquivo nao encontrado..." << endl;
     }
+
+
 }
 
 void Grafo::Ordenar_vertice(int l, int r){
@@ -328,6 +356,9 @@ void Grafo::Ordenar_vertice(int l, int r){
 }
 
 void Grafo::imprimir(){
+
+    cout << "Tentando imprimir o grafo no arquivo Resultado.txt... " << endl << endl;
+
     ofstream Arquivo;
     Arquivo.open("Resultado.txt");
 
@@ -341,6 +372,8 @@ void Grafo::imprimir(){
             for(int l = 0; l < k; l++)
                 if(matrizPesos[k][l] > 0)
                     Arquivo << k+1 << " " << l+1 << " " << matrizPesos[k][l] <<"\n";
+
+        cout << "Grafo impresso com sucesso no arquivo Resultado.txt... " << endl << endl << endl;
     }
     else
     {
@@ -350,11 +383,14 @@ void Grafo::imprimir(){
 };
 
 int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
-    //Verifica se as entradas i e j são validas
 
+    //Verifica se as entradas i e j são validas
     if(i <= 0 || grauDesejado <= 0 || i > v || grauDesejado > 3)
     {
-        cout << "Dijsktra: ENTRADAS INVALIDAS!" << endl;
+        cout << "Dijsktra: ENTRADAS INVALIDAS! " << contt << endl;
+        cout << "i = " << i << endl;
+        cout << "grauDesejado = " << grauDesejado << endl << endl;
+        system("pause");
         return 0;
     }
 
@@ -372,10 +408,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
     int rot[v];
 
     //Variavel usada como marcador dos vertices para o algoritmo do dijkstra.
-    bool vm[v];
-
-    //Pilha para armazenar os vertices a seres visitados e pilha para armazena a rota.
-    //Pilha pa;
+    bool vm[v] = {};
 
     //Coloca o vertice inicial na fila.
     verticeAtual = i;
@@ -394,6 +427,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
     //Enquanto houverem vértices a serem percorridos.
     for(int k = 0; k < v; k++)
     {
+        //cout << endl;
         pivoPeso = INT_MAX;
         proxVertice = -1;
         for(int l = 0; l < v; l++)
@@ -403,10 +437,13 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
             {
                 c = l;
                 p = matrizPesos[verticeAtual][l];
-                if(p < pivoPeso && !vm[l])
+                if(!vm[l])
                 {
-                    pivoPeso = p;
-                    proxVertice = l;
+                    if(p < pivoPeso)
+                    {
+                        pivoPeso = p;
+                        proxVertice = l;
+                    }
                     VerticesNMarcados[l] = p;
                 }
             }
@@ -448,7 +485,7 @@ int Grafo::Dijkstra(int i, int grauDesejado, int aux[]){
 
     if(j < 0)
     {
-        cout << "BUGOU O DIJKSTRA NO J (PODE TER SIDO CHAMADO SEM NENHUM VERTICE COM grau " << grauDesejado << " restante)" << endl;
+        cout << "BUGOU O DIJKSTRA NO J (PODE TER SIDO CHAMADO SEM NENHUM VERTICE COM grau " << grauDesejado << " restante) " << contt << endl;
         return 0;
     }
 
