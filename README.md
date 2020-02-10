@@ -11,7 +11,7 @@ clone this repository and run the program with main.cpp file .
 
 * [C++](http://www.cplusplus.com/) - languages used
 * [Dijkstra](https://www.inf.ufsc.br/grafos/temas/custo-minimo/dijkstra.html) - algorithm used
-* [Graphs](https://www.ime.usp.br/~pf/algoritmos_em_grafos/aulas/grafos.html) - data structure used
+* [forks](https://www.ime.usp.br/~pf/algoritmos_em_grafos/aulas/grafos.html) - data structure used
 
 
 ## Contributing
